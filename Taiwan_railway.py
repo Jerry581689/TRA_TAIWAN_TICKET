@@ -9,49 +9,46 @@ from selenium.webdriver.common.action_chains import ActionChains
 
 
 
-# 指定 Chrome 浏览器的路径
-chrome_path = "C:\\Users\\User\\OneDrive\\桌面\\chrome-win64\\chrome.exe"
 
-# 创建 ChromeOptions 对象，设置浏览器路径
-chrome_options = webdriver.ChromeOptions()
+chrome_path = "C:\\Users\\User\\OneDrive\\桌面\\chrome-win64\\chrome.exe"   # 指定 Chrome 浏览器的路径
+chrome_options = webdriver.ChromeOptions()  # 创建 ChromeOptions 对象，设置浏览器路径
 chrome_options.binary_location = chrome_path
-
-# 创建 Chrome WebDriver 对象，并指定 Chrome 浏览器和 Chrome WebDriver 的路径
-driver = webdriver.Chrome(options=chrome_options)
-
-
-# 開啟網站
+driver = webdriver.Chrome(options=chrome_options)# 创建 Chrome WebDriver 对象，并指定 Chrome 浏览器和 Chrome WebDriver 的路径
+driver.maximize_window() # 將視窗最大化
 driver.get("https://www.railway.gov.tw/tra-tip-web/tip/tip001/tip123/query")
 
-# 做你的測試
-# WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "XPath"))).click()
+
+# 填入參數
+ID           = "A139325062"
+STARTSTATION = "松山"
+ENDSTATION   = "豐原"
+DATE         = "20240404"
+TIME1        = "18:30"
+TIME2        = "23:59"
 
 account = driver.find_element(by=By.XPATH, value="//*[@id=\"pid\"]") #身分證
 account.clear()
-account.send_keys("A139325062")
+account.send_keys(ID)
 
 driver.find_element(by=By.XPATH, value="//*[@id=\"queryForm\"]/div[1]/div[3]/div[2]/label[2]").click() # 依時段
 
+# driver.find_element(by=By.CLASS_NAME,value="icon-list").click()  舊
+# driver.find_element(by=By.XPATH,value="//*[@id=\"cityHot\"]/ul/li[4]/button").click()
 
-
-
-driver.find_element(by=By.CLASS_NAME,value="icon-list").click()
-driver.find_element(by=By.XPATH,value="//*[@id=\"cityHot\"]/ul/li[4]/button").click()
-driver.find_element(by=By.CLASS_NAME,value="endStation").send_keys("豐原")
-
-
+driver.find_element(by=By.CLASS_NAME,value="startStation").send_keys(STARTSTATION)
+driver.find_element(by=By.CLASS_NAME,value="endStation").send_keys(ENDSTATION)
 
 input_element = driver.find_element(By.ID, "rideDate1")
 input_element.clear()
-input_element.send_keys("20240404")
+input_element.send_keys(DATE)
 
 
 select_element = driver.find_element(by=By.ID,value="startTime1")
 select = Select(select_element)
-select.select_by_value("18:30")
+select.select_by_value(TIME1)
 select_element = driver.find_element(by=By.ID,value="endTime1")
 select = Select(select_element)
-select.select_by_value("23:59")
+select.select_by_value(TIME2)
 
 
 driver.find_element(by=By.CSS_SELECTOR,value='label[for="ticketOrderParamList0.trainTypeList1"]').click()
