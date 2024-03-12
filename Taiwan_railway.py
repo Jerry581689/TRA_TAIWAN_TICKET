@@ -28,7 +28,7 @@ driver.get("https://www.railway.gov.tw/tra-tip-web/tip/tip001/tip123/query")
 
 account = driver.find_element(by=By.XPATH, value="//*[@id=\"pid\"]") #身分證
 account.clear()
-account.send_keys("L125512387")
+account.send_keys("A139325062")
 
 driver.find_element(by=By.XPATH, value="//*[@id=\"queryForm\"]/div[1]/div[3]/div[2]/label[2]").click() # 依時段
 
@@ -43,7 +43,7 @@ driver.find_element(by=By.CLASS_NAME,value="endStation").send_keys("豐原")
 
 input_element = driver.find_element(By.ID, "rideDate1")
 input_element.clear()
-input_element.send_keys("20240403")
+input_element.send_keys("20240404")
 
 
 select_element = driver.find_element(by=By.ID,value="startTime1")
@@ -66,13 +66,16 @@ driver.find_element(by=By.CLASS_NAME,value="btn-3d").click()
 
 
 
-
-h2_element = driver.find_element(by=By.CSS_SELECTOR,value='h2.icon-fa.warning')
-text = h2_element.text
-print(text)
+try:
+    h2_element = driver.find_element(by=By.CSS_SELECTOR,value='h2.icon-fa.warning')
+    text = h2_element.text
+    print(text)
+except Exception:
+      text = ""
+      print("找不到元素，有車票喔喔喔")
 
 #while True:
-for i in range(5):
+for i in range(1):
     if text == "系統依您所設定的訂票內容查詢，目前查無可售座位，請您調整訂票內容後再重新查詢！":    
         reset_button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "//*[@id='reset']")))
         driver.execute_script("arguments[0].click();", reset_button)
@@ -86,13 +89,22 @@ for i in range(5):
         h2_element = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'h2.icon-fa.warning')))
         text = h2_element.text
     else:
-        break
+
+        link_element = driver.find_element(By.XPATH, '//a[contains(text(), "自強(3000)")]')
+        print(link_element)
+        tr_element = link_element.find_element(By.XPATH, './ancestor::tr[@class="trip-column"]')
+        label_element = tr_element.find_element(By.CSS_SELECTOR, 'label[for]')
+        label_element.click()    
+
+        input("請手動處理 reCAPTCHA，按下回車繼續...")
+
+        driver.find_element(By.XPATH, value="//*[@id=\"queryForm\"]/div[2]/button[2]").click()
         
     
     
 
 
-time.sleep(100)  # 暫停 10 秒，您可以根據需要調整等待的時間
+time.sleep(1000)  # 暫停 10 秒，您可以根據需要調整等待的時間
 
 # 關閉瀏覽器
 driver.quit()
