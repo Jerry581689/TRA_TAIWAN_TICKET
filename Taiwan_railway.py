@@ -34,6 +34,7 @@ ENDSTATION   = "豐原"
 DATE         = "20240403"
 TIME1        = "18:30"
 TIME2        = "23:59"
+Ticket_Count = "2"
 
 account = driver.find_element(by=By.XPATH, value="//*[@id=\"pid\"]") #身分證
 account.clear()
@@ -58,6 +59,11 @@ select.select_by_value(TIME1)
 select_element = driver.find_element(by=By.ID,value="endTime1")
 select = Select(select_element)
 select.select_by_value(TIME2)
+
+#票的張數
+input_element = driver.find_element(By.ID, "normalQty1")  # 使用 ID 定位元素
+input_element.clear()  # 清空原有內容
+input_element.send_keys(Ticket_Count)  
 
 
 driver.find_element(by=By.CSS_SELECTOR,value='label[for="ticketOrderParamList0.trainTypeList1"]').click()
@@ -92,7 +98,7 @@ except Exception:
       print("找不到元素，有車票喔喔喔")
 
 #while True:
-for i in range(5):
+for i in range(2):
     if text == "系統依您所設定的訂票內容查詢，目前查無可售座位，請您調整訂票內容後再重新查詢！":    
         reset_button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "//*[@id='reset']")))
         driver.execute_script("arguments[0].click();", reset_button)
