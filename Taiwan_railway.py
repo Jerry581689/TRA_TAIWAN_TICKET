@@ -14,7 +14,13 @@ chrome_path = "C:\\Users\\User\\OneDrive\\桌面\\chrome-win64\\chrome.exe"   # 
 chrome_options = webdriver.ChromeOptions()  # 创建 ChromeOptions 对象，设置浏览器路径
 chrome_options.binary_location = chrome_path
 driver = webdriver.Chrome(options=chrome_options)# 创建 Chrome WebDriver 对象，并指定 Chrome 浏览器和 Chrome WebDriver 的路径
-driver.maximize_window() # 將視窗最大化
+# driver.maximize_window() # 將視窗最大化
+screen_width = driver.execute_script("return window.screen.width;")
+screen_height = driver.execute_script("return window.screen.height;")
+# 將視窗調整為左半邊
+driver.set_window_position(0, 0)
+driver.set_window_size(screen_width // 2, screen_height)
+
 driver.get("https://www.railway.gov.tw/tra-tip-web/tip/tip001/tip123/query")
 
 
