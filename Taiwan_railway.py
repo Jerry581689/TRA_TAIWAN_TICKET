@@ -10,8 +10,8 @@ from selenium.webdriver.common.action_chains import ActionChains
 
 
 
-# chrome_path = "C:\\Users\\User\\Desktop\\chrome-win64\\chrome-win64\\chrome.exe" #HOME
-chrome_path = "C:\\Users\\User\\OneDrive\\桌面\\chrome-win64\\chrome.exe"   # 指定 Chrome 浏览器的路径 公司
+chrome_path = "C:\\Users\\User\\Desktop\\chrome-win64\\chrome-win64\\chrome.exe" #HOME
+# chrome_path = "C:\\Users\\User\\OneDrive\\桌面\\chrome-win64\\chrome.exe"   # 指定 Chrome 浏览器的路径 公司
 chrome_options = webdriver.ChromeOptions()  # 创建 ChromeOptions 对象，设置浏览器路径
 chrome_options.binary_location = chrome_path
 driver = webdriver.Chrome(options=chrome_options)# 创建 Chrome WebDriver 对象，并指定 Chrome 浏览器和 Chrome WebDriver 的路径
@@ -28,7 +28,7 @@ driver.get("https://www.railway.gov.tw/tra-tip-web/tip/tip001/tip123/query")
 
 
 # 填入參數
-ID           = "A157256382" # L125512387
+ID           = "L125512387" # L125512387 A157256382
 STARTSTATION = "松山"
 ENDSTATION   = "豐原"
 DATE         = "20240403"
@@ -74,11 +74,10 @@ driver.find_element(by=By.CSS_SELECTOR,value='label[for="ticketOrderParamList0.t
 driver.find_element(by=By.CSS_SELECTOR,value='label[for="ticketOrderParamList0.trainTypeList6"]').click()
 
 
-# 計算距離上午 11:40 的秒數
-time_difference = (datetime.datetime.now().replace(hour=11, minute=50, second=0, microsecond=0) - datetime.datetime.now()).total_seconds()
+# time_difference = (datetime.datetime.now().replace(hour=21, minute=15, second=0, microsecond=0) - datetime.datetime.now()).total_seconds()
 
 # 計算距離凌晨 12:00 的秒數
-# time_difference = (datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0) - datetime.datetime.now()).total_seconds()
+time_difference = (datetime.datetime.now().replace(hour=0, minute=2, second=0, microsecond=0) - datetime.datetime.now()).total_seconds()
 
 if time_difference > 0:
     print("倒數",time_difference,"秒")
