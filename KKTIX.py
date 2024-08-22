@@ -1,4 +1,5 @@
 import datetime
+import random
 import time
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -14,12 +15,12 @@ from selenium.common.exceptions import StaleElementReferenceException
 HOUR = 22
 MIN = 55
 SEC = 0
-URL = "https://kktix.com/events/a8249618-01afw/registrations/new" ##網址   https://kktix.com/events/della-2024-hk/registrations/new
+URL = "https://kktix.com/events/della-2024-hk/registrations/new" ##網址   # 叮噹    #GIDLE https://kktix.com/events/a8249618-01afw/registrations/new
 EMAIL = "Jerry581689@gmail.com"
 PASSWORD = "J25354634"
-TARGET_PRICE = "3880"
+TARGET_PRICE = "788" #GIDLE 3880 #叮噹 788
 TICKET_NUMBER = 2  ##張數
-SEAT_CHOOSE = "COMPUTER"  ## SELF , COMPUTER ,NONE  ## 自己選位,電腦選位,下一步
+SEAT_CHOOSE = "NONE"  ## SELF , COMPUTER ,NONE  ## 自己選位,電腦選位,下一步
 
 
 # 計算時間差
@@ -35,13 +36,42 @@ def calculate_time_difference():
 
 ## chrome環境設定
 def chromedriver_setting():
-    chrome_path = "C:\\Users\\User\\Desktop\\chrome-win64\\chrome-win64\\chrome.exe" #HOME
+    chrome_path = "C:\\Users\\00048628\\Desktop\\chrome-win64\\chrome.exe" #HOME  C:\\Users\\User\\Desktop\\chrome-win64\\chrome-win64\\chrome.exe  
     chrome_options = webdriver.ChromeOptions()
     chrome_options.binary_location = chrome_path
+
+
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36")
+    chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    chrome_options.add_experimental_option('useAutomationExtension', False)
+    chrome_options.add_argument("--disable-webrtc")
+    chrome_options.add_argument("--log-level=3")
+    chrome_options.add_argument("--incognito")  # 使用隱私模式
+
+    # 隨機化窗口大小與位置
+    window_position = (random.randint(0, 100), random.randint(0, 100))
+    window_size = (random.randint(1024, 1920), random.randint(768, 1080))
+    chrome_options.add_argument(f"--window-position={window_position[0]},{window_position[1]}")
+    chrome_options.add_argument(f"--window-size={window_size[0]},{window_size[1]}")
+
+
     driver = webdriver.Chrome(options=chrome_options)
-    driver.maximize_window() # 將視窗最大化
+    
+    # 移除 WebDriver 標識（進一步強化）
+    driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
+        "source": """
+        Object.defineProperty(navigator, 'webdriver', {
+            get: () => undefined
+        })
+        """
+    })
+
     driver.get(URL)
     return driver
+
+
 
 ##登入
 def login(driver):
@@ -67,7 +97,7 @@ def ticket(driver):
             if not tickets:
                 print("没找到票，刷新页面并重试...")
                 driver.refresh()
-                time.sleep(5)  # 等待页面刷新完成
+                time.sleep(1)  # 等待页面刷新完成
                 continue
 
             for ticket in tickets:
@@ -84,14 +114,20 @@ def ticket(driver):
                         if not plus_button:
                             print("有相對應票，但是已售完!!><")
                             driver.refresh()
-                            time.sleep(100)
+                            time.sleep(10)
                             continue
                         else:
+                            plus_button = plus_button[0]  # 選擇第一個按鈕
+                            actions = ActionChains(driver) # 模擬滑鼠移動並點擊
                             for _ in range(TICKET_NUMBER):
-                                plus_button.click()
+                                # plus_button.click()
+                                actions.move_to_element(plus_button).click().perform()
+                            
+
                             # 服務條款 check
                             checkbox = driver.find_element(By.ID, "person_agree_terms")
-                            checkbox.click()
+                            actions.move_to_element(checkbox).pause(1).click().perform() #延遲一秒
+                            # checkbox.click()
                             return  # 停止循環，任務完成
                     else:
                         print("沒找到相對應的票價><><")
@@ -99,7 +135,7 @@ def ticket(driver):
                 except StaleElementReferenceException:
                     print("元素變得無效，重試查找該元素...")
                     driver.refresh()
-                    time.sleep(100)
+                    time.sleep(1)
                     continue
 
         except NoSuchElementException:           
@@ -131,7 +167,7 @@ def seat(driver,SEAT_CHOOSE):
 # 主程序
 driver = chromedriver_setting()
 login(driver)
-calculate_time_difference()
+# calculate_time_difference()
 driver.refresh()
 ticket(driver)
 seat(driver, SEAT_CHOOSE)
